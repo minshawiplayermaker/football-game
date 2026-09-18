@@ -7,177 +7,94 @@ pygame.display.set_caption("Football Game")
 
 clock = pygame.time.Clock()
 
-green = (50, 170, 70)
-white = (255, 255, 255)
-black = (0, 0, 0)
-blue = (30, 50, 200)
-yellow = (255, 220, 0)
 
-# Players
-player1 = pygame.Rect(100, 230, 40, 50)
-player2 = pygame.Rect(660, 230, 40, 50)
+# This function draws the football on the screen
+def draw_ball(x, y):
+    pygame.draw.circle(screen, (255, 255, 255), (x, y), 10)
 
-# Ball
-ball = pygame.Rect(390, 240, 20, 20)
 
-score1 = 0
-score2 = 0
-ball_speed = 0
-game_over = False
+# A class is like a blueprint for making players
+class Player:
 
+    # This sets up the player's starting information
+    def __init__(self, x, y, shirt_color):
+        self.x = x
+        self.y = y
+        self.shirt_color = shirt_color
+
+    # This function draws the player
+    def draw(self):
+
+        # Draw the player's body
+        pygame.draw.rect(
+            screen,
+            self.shirt_color,
+            (self.x, self.y, 30, 45)
+        )
+
+        # Draw the player's head
+        pygame.draw.circle(
+            screen,
+            (255, 200, 150),
+            (self.x + 15, self.y - 10),
+            12
+        )
+
+        # Draw the player's left leg
+        pygame.draw.line(
+            screen,
+            (0, 0, 0),
+            (self.x + 8, self.y + 45),
+            (self.x + 8, self.y + 65),
+            5
+        )
+
+        # Draw the player's right leg
+        pygame.draw.line(
+            screen,
+            (0, 0, 0),
+            (self.x + 22, self.y + 45),
+            (self.x + 22, self.y + 65),
+            5
+        )
+
+
+# These are objects made from the Player class
+# Each object represents one player
+player1 = Player(200, 300, (255, 0, 0))
+player2 = Player(600, 300, (0, 0, 255))
+
+
+# This keeps the game running
 running = True
 
 while running:
 
+    # Checks if the player closes the game
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    keys = pygame.key.get_pressed()
+    # Makes the football field green
+    screen.fill((40, 150, 40))
 
-    if game_over == False:
+    # Draws both players
+    player1.draw()
+    player2.draw()
 
-        # Player 1 controls
-        if keys[pygame.K_w]:
-            player1.y = player1.y - 3
-        if keys[pygame.K_s]:
-            player1.y = player1.y + 3
-        if keys[pygame.K_a]:
-            player1.x = player1.x - 3
-        if keys[pygame.K_d]:
-            player1.x = player1.x + 3
+    # Draws the football
+    draw_ball(400, 350)
 
-        # Player 2 controls
-        if keys[pygame.K_UP]:
-            player2.y = player2.y - 3
-        if keys[pygame.K_DOWN]:
-            player2.y = player2.y + 3
-        if keys[pygame.K_LEFT]:
-            player2.x = player2.x - 3
-        if keys[pygame.K_RIGHT]:
-            player2.x = player2.x + 3
-
-        # Player 1 kick
-        if keys[pygame.K_SPACE]:
-            if player1.colliderect(ball):
-                ball_speed = 6
-
-        # Player 2 kick
-        if keys[pygame.K_RETURN]:
-            if player2.colliderect(ball):
-                ball_speed = -6
-
-        # Keep players on the field
-        if player1.x < 25:
-            player1.x = 25
-        if player1.x > 735:
-            player1.x = 735
-        if player1.y < 120:
-            player1.y = 120
-        if player1.y > 400:
-            player1.y = 400
-
-        if player2.x < 25:
-            player2.x = 25
-        if player2.x > 735:
-            player2.x = 735
-        if player2.y < 120:
-            player2.y = 120
-        if player2.y > 400:
-            player2.y = 400
-
-        # Move the ball
-        ball.x = ball.x + ball_speed
-
-        # Goal for Barcelona
-        if ball.x < 0:
-            score2 = score2 + 1
-            ball.x = 390
-            ball.y = 240
-            ball_speed = 0
-
-        # Goal for Real Madrid
-        if ball.x > 780:
-            score1 = score1 + 1
-            ball.x = 390
-            ball.y = 240
-            ball_speed = 0
-
-        # Check winner
-        if score1 == 3:
-            game_over = True
-
-        if score2 == 3:
-            game_over = True
-
-    # Draw field
-    screen.fill(green)
-
-    pygame.draw.rect(screen, white, (20, 100, 760, 350), 4)
-    pygame.draw.line(screen, white, (400, 100), (400, 450), 3)
-    pygame.draw.circle(screen, white, (400, 275), 60, 3)
-
-    # Goals
-    pygame.draw.rect(screen, white, (0, 220, 20, 110), 3)
-    pygame.draw.rect(screen, white, (780, 220, 20, 110), 3)
-
-    # Real Madrid player
-    pygame.draw.circle(screen, white, (120, 218), 15)
-    pygame.draw.rect(screen, white, player1)
-
-    # Barcelona player
-    pygame.draw.circle(screen, black, (680, 218), 15)
-    pygame.draw.rect(screen, blue, player2)
-
-    # Ball
-    pygame.draw.circle(screen, white, ball.center, 10)
-    pygame.draw.circle(screen, black, ball.center, 10, 2)
-
-    # Score
-    font = pygame.font.Font(None, 40)
-
-    score_text = font.render(
-        "Real Madrid " + str(score1) + " - " + str(score2) + " Barcelona",
-        True,
-        white
-    )
-
-    screen.blit(score_text, (230, 40))
-
-    # Game over
-    if game_over:
-        big_font = pygame.font.Font(None, 70)
-
-        game_text = big_font.render(
-            "GAME OVER",
-            True,
-            yellow
-        )
-
-        screen.blit(game_text, (270, 180))
-
-        if score1 == 3:
-            winner = font.render(
-                "Real Madrid wins!",
-                True,
-                white
-            )
-        else:
-            winner = font.render(
-                "Barcelona wins!",
-                True,
-                white
-            )
-
-        screen.blit(winner, (300, 260))
-
+    # Updates the screen
     pygame.display.update()
+
+    # Keeps the game running at 60 frames per second
     clock.tick(60)
 
 pygame.quit()
-#i need to add function
-#and classes and objects which will help me do the following
-#1. make the players driblle the ball
-#2. make the players block
-#3.keeping theere head on there body
-print("game over")
+
+
+# Things I need to add:
+# 1. Make the players dribble the ball
+# 2. Make the players block
+# 3. Keep there heads on their bodies
