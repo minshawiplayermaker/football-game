@@ -56,6 +56,20 @@ class Player:
         else:
             self.blocking = False
 
+    # This function makes the player shoot
+    def shoot(self, keys, shoot_key, ball_x, ball_y):
+
+        if keys[shoot_key]:
+            # Player 1 shoots to the right
+            if self.x < 400:
+                ball_x += 10
+
+            # Player 2 shoots to the left
+            else:
+                ball_x -= 10
+
+        return ball_x, ball_y
+
     # This function draws the player's head
     def draw_head(self):
 
@@ -165,6 +179,22 @@ while running:
     # Player 2 blocks with ENTER
     player2.block(keys, pygame.K_RETURN)
 
+    # Player 1 shoots with F
+    ball_x, ball_y = player1.shoot(
+        keys,
+        pygame.K_f,
+        ball_x,
+        ball_y
+    )
+
+    # Player 2 shoots with L
+    ball_x, ball_y = player2.shoot(
+        keys,
+        pygame.K_l,
+        ball_x,
+        ball_y
+    )
+
     # Ball follows Player 1
     if abs(player1.x - ball_x) < 50 and abs(player1.y - ball_y) < 60:
         ball_x = player1.x + 40
@@ -199,3 +229,4 @@ pygame.quit()
 # 1. Make the players dribble the ball
 # 2. Make the players block
 # 3. Keep the players' heads on their bodies
+# 4. Make the players shoot
