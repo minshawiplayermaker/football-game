@@ -49,6 +49,3 @@ Two players can move around the football field, dribble the ball, block, and sho
 * Game over screen
 * Restart button
 
-## 👨‍💻 Project
-
-This project was made as a beginner Python/Pygame game to practice **functions, classes, objects, and game programming**.
