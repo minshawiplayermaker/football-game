@@ -56,6 +56,19 @@ class Player:
         else:
             self.blocking = False
 
+    # This function checks if the player blocks the ball
+    def block_ball(self, ball_x, ball_y, ball_speed):
+
+        if self.blocking:
+
+            # Check if the ball is close to the player
+            if abs(self.x - ball_x) < 50 and abs(self.y - ball_y) < 60:
+
+                # Stop the ball
+                ball_speed = 0
+
+        return ball_speed
+
     # This function draws the player's head
     def draw_head(self):
 
@@ -153,7 +166,7 @@ player2_score = 0
 # Game over
 game_over = False
 
-# Font for score and game over
+# Font
 font = pygame.font.Font(None, 40)
 big_font = pygame.font.Font(None, 70)
 
@@ -190,7 +203,6 @@ while running:
 
                 game_over = False
 
-            # Only shoot when the game is running
             if not game_over:
 
                 # Player 1 shoots with F
@@ -203,10 +215,8 @@ while running:
                     ball_speed = -10
                     ball_shooting = True
 
-    # Check which keys are being pressed
     keys = pygame.key.get_pressed()
 
-    # Only allow movement while game is running
     if not game_over:
 
         # Move players
@@ -219,23 +229,41 @@ while running:
         # Player 2 blocks with ENTER
         player2.block(keys, pygame.K_RETURN)
 
-        # Move the ball after shooting
+        # Move the ball
         if ball_shooting:
             ball_x += ball_speed
 
-        # Ball follows Player 1 when it is not shooting
+        # Check if Player 1 blocks the ball
+        ball_speed = player1.block_ball(
+            ball_x,
+            ball_y,
+            ball_speed
+        )
+
+        # Check if Player 2 blocks the ball
+        ball_speed = player2.block_ball(
+            ball_x,
+            ball_y,
+            ball_speed
+        )
+
+        # If the ball was blocked, stop shooting
+        if ball_speed == 0:
+            ball_shooting = False
+
+        # Ball follows Player 1
         if not ball_shooting:
             if abs(player1.x - ball_x) < 50 and abs(player1.y - ball_y) < 60:
                 ball_x = player1.x + 40
                 ball_y = player1.y + 40
 
-        # Ball follows Player 2 when it is not shooting
+        # Ball follows Player 2
         if not ball_shooting:
             if abs(player2.x - ball_x) < 50 and abs(player2.y - ball_y) < 60:
                 ball_x = player2.x - 10
                 ball_y = player2.y + 40
 
-        # Player 1 scores in the right goal
+        # Player 1 scores
         if ball_x >= 780 and 180 <= ball_y <= 320:
 
             player1_score += 1
@@ -245,7 +273,7 @@ while running:
             ball_speed = 0
             ball_shooting = False
 
-        # Player 2 scores in the left goal
+        # Player 2 scores
         if ball_x <= 20 and 180 <= ball_y <= 320:
 
             player2_score += 1
@@ -255,29 +283,29 @@ while running:
             ball_speed = 0
             ball_shooting = False
 
-        # Someone wins when they reach 3 goals
+        # Game over at 3 goals
         if player1_score >= 3 or player2_score >= 3:
             game_over = True
 
-        # Stop the ball at the edge
+        # Stop ball at edge
         if ball_x < 0 or ball_x > 800:
             ball_shooting = False
             ball_speed = 0
 
-    # Green football field
+    # Draw field
     screen.fill((40, 150, 40))
 
-    # Draw the goals
+    # Draw goals
     draw_goals()
 
     # Draw players
     player1.draw()
     player2.draw()
 
-    # Draw the ball
+    # Draw ball
     draw_ball(ball_x, ball_y)
 
-    # Draw the score
+    # Draw score
     score_text = font.render(
         str(player1_score) + " - " + str(player2_score),
         True,
@@ -318,7 +346,7 @@ while running:
 pygame.quit()
 
 
-# Things I added:
-# 1. Functions
-# 2. Classes and objects
-# 3. Players can dribble the ball
+# Things I need to add:
+# 1. Make the players dribble the ball
+# 2. Make the players block
+# 3. Keep their heads on their bodies
