@@ -146,6 +146,17 @@ ball_y = 350
 ball_speed = 0
 ball_shooting = False
 
+# Scores
+player1_score = 0
+player2_score = 0
+
+# Game over
+game_over = False
+
+# Font for score and game over
+font = pygame.font.Font(None, 40)
+big_font = pygame.font.Font(None, 70)
+
 
 # Game loop
 running = True
@@ -157,52 +168,101 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        # Shoot when the key is pressed
         if event.type == pygame.KEYDOWN:
 
-            # Player 1 shoots with F
-            if event.key == pygame.K_f:
-                ball_speed = 10
-                ball_shooting = True
+            # Restart the game
+            if event.key == pygame.K_r and game_over:
 
-            # Player 2 shoots with L
-            if event.key == pygame.K_l:
-                ball_speed = -10
-                ball_shooting = True
+                player1_score = 0
+                player2_score = 0
+
+                player1.x = 200
+                player1.y = 300
+
+                player2.x = 600
+                player2.y = 300
+
+                ball_x = 400
+                ball_y = 350
+
+                ball_speed = 0
+                ball_shooting = False
+
+                game_over = False
+
+            # Only shoot when the game is running
+            if not game_over:
+
+                # Player 1 shoots with F
+                if event.key == pygame.K_f:
+                    ball_speed = 10
+                    ball_shooting = True
+
+                # Player 2 shoots with L
+                if event.key == pygame.K_l:
+                    ball_speed = -10
+                    ball_shooting = True
 
     # Check which keys are being pressed
     keys = pygame.key.get_pressed()
 
-    # Move players
-    player1.move(keys, player1_controls)
-    player2.move(keys, player2_controls)
+    # Only allow movement while game is running
+    if not game_over:
 
-    # Player 1 blocks with SPACE
-    player1.block(keys, pygame.K_SPACE)
+        # Move players
+        player1.move(keys, player1_controls)
+        player2.move(keys, player2_controls)
 
-    # Player 2 blocks with ENTER
-    player2.block(keys, pygame.K_RETURN)
+        # Player 1 blocks with SPACE
+        player1.block(keys, pygame.K_SPACE)
 
-    # Move the ball after shooting
-    if ball_shooting:
-        ball_x += ball_speed
+        # Player 2 blocks with ENTER
+        player2.block(keys, pygame.K_RETURN)
 
-    # Ball follows Player 1 when it is not shooting
-    if not ball_shooting:
-        if abs(player1.x - ball_x) < 50 and abs(player1.y - ball_y) < 60:
-            ball_x = player1.x + 40
-            ball_y = player1.y + 40
+        # Move the ball after shooting
+        if ball_shooting:
+            ball_x += ball_speed
 
-    # Ball follows Player 2 when it is not shooting
-    if not ball_shooting:
-        if abs(player2.x - ball_x) < 50 and abs(player2.y - ball_y) < 60:
-            ball_x = player2.x - 10
-            ball_y = player2.y + 40
+        # Ball follows Player 1 when it is not shooting
+        if not ball_shooting:
+            if abs(player1.x - ball_x) < 50 and abs(player1.y - ball_y) < 60:
+                ball_x = player1.x + 40
+                ball_y = player1.y + 40
 
-    # Stop the ball when it reaches the edge
-    if ball_x < 0 or ball_x > 800:
-        ball_shooting = False
-        ball_speed = 0
+        # Ball follows Player 2 when it is not shooting
+        if not ball_shooting:
+            if abs(player2.x - ball_x) < 50 and abs(player2.y - ball_y) < 60:
+                ball_x = player2.x - 10
+                ball_y = player2.y + 40
+
+        # Player 1 scores in the right goal
+        if ball_x >= 780 and 180 <= ball_y <= 320:
+
+            player1_score += 1
+
+            ball_x = 400
+            ball_y = 350
+            ball_speed = 0
+            ball_shooting = False
+
+        # Player 2 scores in the left goal
+        if ball_x <= 20 and 180 <= ball_y <= 320:
+
+            player2_score += 1
+
+            ball_x = 400
+            ball_y = 350
+            ball_speed = 0
+            ball_shooting = False
+
+        # Someone wins when they reach 3 goals
+        if player1_score >= 3 or player2_score >= 3:
+            game_over = True
+
+        # Stop the ball at the edge
+        if ball_x < 0 or ball_x > 800:
+            ball_shooting = False
+            ball_speed = 0
 
     # Green football field
     screen.fill((40, 150, 40))
@@ -216,6 +276,40 @@ while running:
 
     # Draw the ball
     draw_ball(ball_x, ball_y)
+
+    # Draw the score
+    score_text = font.render(
+        str(player1_score) + " - " + str(player2_score),
+        True,
+        (255, 255, 255)
+    )
+
+    screen.blit(score_text, (370, 20))
+
+    # Game over screen
+    if game_over:
+
+        if player1_score >= 3:
+            winner_text = big_font.render(
+                "RED PLAYER WINS!",
+                True,
+                (255, 255, 255)
+            )
+        else:
+            winner_text = big_font.render(
+                "BLUE PLAYER WINS!",
+                True,
+                (255, 255, 255)
+            )
+
+        restart_text = font.render(
+            "Press R to restart",
+            True,
+            (255, 255, 255)
+        )
+
+        screen.blit(winner_text, (190, 200))
+        screen.blit(restart_text, (300, 280))
 
     pygame.display.update()
 
