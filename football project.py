@@ -22,6 +22,30 @@ class Player:
         self.y = y
         self.shirt_color = shirt_color
         self.speed = 5
+        self.blocking = False
+
+    # This function moves the player
+    def move(self, keys, controls):
+
+        if keys[controls[0]]:
+            self.x -= self.speed
+
+        if keys[controls[1]]:
+            self.x += self.speed
+
+        if keys[controls[2]]:
+            self.y -= self.speed
+
+        if keys[controls[3]]:
+            self.y += self.speed
+
+    # This function lets the player block
+    def block(self, keys, block_key):
+
+        if keys[block_key]:
+            self.blocking = True
+        else:
+            self.blocking = False
 
     # This function draws the player
     def draw(self):
@@ -41,7 +65,7 @@ class Player:
             12
         )
 
-        # Draw the left leg
+        # Draw the legs
         pygame.draw.line(
             screen,
             (0, 0, 0),
@@ -50,7 +74,6 @@ class Player:
             5
         )
 
-        # Draw the right leg
         pygame.draw.line(
             screen,
             (0, 0, 0),
@@ -59,28 +82,32 @@ class Player:
             5
         )
 
-    # This function moves the player
-    def move(self, keys, controls):
+        # Draw arms when the player is blocking
+        if self.blocking:
 
-        if keys[controls[0]]:
-            self.x -= self.speed
+            pygame.draw.line(
+                screen,
+                (0, 0, 0),
+                (self.x, self.y + 15),
+                (self.x - 15, self.y + 30),
+                5
+            )
 
-        if keys[controls[1]]:
-            self.x += self.speed
+            pygame.draw.line(
+                screen,
+                (0, 0, 0),
+                (self.x + 30, self.y + 15),
+                (self.x + 45, self.y + 30),
+                5
+            )
 
-        if keys[controls[2]]:
-            self.y -= self.speed
 
-        if keys[controls[3]]:
-            self.y += self.speed
-
-
-# These are player objects
+# Player objects
 player1 = Player(200, 300, (255, 0, 0))
 player2 = Player(600, 300, (0, 0, 255))
 
 
-# Player 1 controls: A, D, W, S
+# Player 1 controls
 player1_controls = [
     pygame.K_a,
     pygame.K_d,
@@ -88,7 +115,7 @@ player1_controls = [
     pygame.K_s
 ]
 
-# Player 2 controls: Left, Right, Up, Down
+# Player 2 controls
 player2_controls = [
     pygame.K_LEFT,
     pygame.K_RIGHT,
@@ -97,10 +124,12 @@ player2_controls = [
 ]
 
 
-# The ball starts in the middle
+# Ball starting position
 ball_x = 400
 ball_y = 350
 
+
+# Game loop
 running = True
 
 while running:
@@ -109,19 +138,25 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # Gets the keys being pressed
+    # Check which keys are being pressed
     keys = pygame.key.get_pressed()
 
-    # Move both players
+    # Move players
     player1.move(keys, player1_controls)
     player2.move(keys, player2_controls)
 
-    # Make the ball follow Player 1
+    # Player 1 blocks with SPACE
+    player1.block(keys, pygame.K_SPACE)
+
+    # Player 2 blocks with ENTER
+    player2.block(keys, pygame.K_RETURN)
+
+    # Ball follows Player 1
     if abs(player1.x - ball_x) < 50 and abs(player1.y - ball_y) < 60:
         ball_x = player1.x + 40
         ball_y = player1.y + 40
 
-    # Make the ball follow Player 2
+    # Ball follows Player 2
     if abs(player2.x - ball_x) < 50 and abs(player2.y - ball_y) < 60:
         ball_x = player2.x - 10
         ball_y = player2.y + 40
@@ -146,4 +181,4 @@ pygame.quit()
 # Things I need to add:
 # 1. Make the players dribble the ball
 # 2. Make the players block
-# 3. Keep the players' heads on their bodies
+# 3. Keep their heads on their bodies
