@@ -47,7 +47,17 @@ class Player:
         else:
             self.blocking = False
 
-    # This function draws the player
+    # This function draws the player's head
+    def draw_head(self):
+
+        pygame.draw.circle(
+            screen,
+            (255, 200, 150),
+            (self.x + 15, self.y - 10),
+            12
+        )
+
+    # This function draws the whole player
     def draw(self):
 
         # Draw the body
@@ -57,15 +67,10 @@ class Player:
             (self.x, self.y, 30, 45)
         )
 
-        # Draw the head
-        pygame.draw.circle(
-            screen,
-            (255, 200, 150),
-            (self.x + 15, self.y - 10),
-            12
-        )
+        # Draw the head using the player's position
+        self.draw_head()
 
-        # Draw the legs
+        # Draw the left leg
         pygame.draw.line(
             screen,
             (0, 0, 0),
@@ -74,6 +79,7 @@ class Player:
             5
         )
 
+        # Draw the right leg
         pygame.draw.line(
             screen,
             (0, 0, 0),
@@ -82,7 +88,7 @@ class Player:
             5
         )
 
-        # Draw arms when the player is blocking
+        # Draw arms when blocking
         if self.blocking:
 
             pygame.draw.line(
@@ -107,7 +113,7 @@ player1 = Player(200, 300, (255, 0, 0))
 player2 = Player(600, 300, (0, 0, 255))
 
 
-# Player 1 controls
+# Player 1 controls: A, D, W, S
 player1_controls = [
     pygame.K_a,
     pygame.K_d,
@@ -115,7 +121,7 @@ player1_controls = [
     pygame.K_s
 ]
 
-# Player 2 controls
+# Player 2 controls: Arrow keys
 player2_controls = [
     pygame.K_LEFT,
     pygame.K_RIGHT,
@@ -178,7 +184,7 @@ while running:
 pygame.quit()
 
 
-# Things I need to add:
+# Things I added:
 # 1. Make the players dribble the ball
 # 2. Make the players block
-# 3. Keep their heads on their bodies
+# 3. Keep the players' heads on their bodies
