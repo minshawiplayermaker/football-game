@@ -56,20 +56,6 @@ class Player:
         else:
             self.blocking = False
 
-    # This function makes the player shoot
-    def shoot(self, keys, shoot_key, ball_x, ball_y):
-
-        if keys[shoot_key]:
-            # Player 1 shoots to the right
-            if self.x < 400:
-                ball_x += 10
-
-            # Player 2 shoots to the left
-            else:
-                ball_x -= 10
-
-        return ball_x, ball_y
-
     # This function draws the player's head
     def draw_head(self):
 
@@ -156,6 +142,10 @@ player2_controls = [
 ball_x = 400
 ball_y = 350
 
+# Ball movement after shooting
+ball_speed = 0
+ball_shooting = False
+
 
 # Game loop
 running = True
@@ -163,8 +153,22 @@ running = True
 while running:
 
     for event in pygame.event.get():
+
         if event.type == pygame.QUIT:
             running = False
+
+        # Shoot when the key is pressed
+        if event.type == pygame.KEYDOWN:
+
+            # Player 1 shoots with F
+            if event.key == pygame.K_f:
+                ball_speed = 10
+                ball_shooting = True
+
+            # Player 2 shoots with L
+            if event.key == pygame.K_l:
+                ball_speed = -10
+                ball_shooting = True
 
     # Check which keys are being pressed
     keys = pygame.key.get_pressed()
@@ -179,31 +183,26 @@ while running:
     # Player 2 blocks with ENTER
     player2.block(keys, pygame.K_RETURN)
 
-    # Player 1 shoots with F
-    ball_x, ball_y = player1.shoot(
-        keys,
-        pygame.K_f,
-        ball_x,
-        ball_y
-    )
+    # Move the ball after shooting
+    if ball_shooting:
+        ball_x += ball_speed
 
-    # Player 2 shoots with L
-    ball_x, ball_y = player2.shoot(
-        keys,
-        pygame.K_l,
-        ball_x,
-        ball_y
-    )
+    # Ball follows Player 1 when it is not shooting
+    if not ball_shooting:
+        if abs(player1.x - ball_x) < 50 and abs(player1.y - ball_y) < 60:
+            ball_x = player1.x + 40
+            ball_y = player1.y + 40
 
-    # Ball follows Player 1
-    if abs(player1.x - ball_x) < 50 and abs(player1.y - ball_y) < 60:
-        ball_x = player1.x + 40
-        ball_y = player1.y + 40
+    # Ball follows Player 2 when it is not shooting
+    if not ball_shooting:
+        if abs(player2.x - ball_x) < 50 and abs(player2.y - ball_y) < 60:
+            ball_x = player2.x - 10
+            ball_y = player2.y + 40
 
-    # Ball follows Player 2
-    if abs(player2.x - ball_x) < 50 and abs(player2.y - ball_y) < 60:
-        ball_x = player2.x - 10
-        ball_y = player2.y + 40
+    # Stop the ball when it reaches the edge
+    if ball_x < 0 or ball_x > 800:
+        ball_shooting = False
+        ball_speed = 0
 
     # Green football field
     screen.fill((40, 150, 40))
@@ -225,8 +224,7 @@ while running:
 pygame.quit()
 
 
-# Things I need to add:
-# 1. Make the players dribble the ball
-# 2. Make the players block
-# 3. Keep the players' heads on their bodies
-# 4. Make the players shoot
+# Things I added:
+# 1. Functions
+# 2. Classes and objects
+# 3. Players can dribble the ball
