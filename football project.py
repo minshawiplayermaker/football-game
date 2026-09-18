@@ -13,6 +13,15 @@ def draw_ball(x, y):
     pygame.draw.circle(screen, (255, 255, 255), (x, y), 10)
 
 
+# This function draws the goals
+def draw_goals():
+    # Left goal
+    pygame.draw.rect(screen, (255, 255, 255), (0, 180, 20, 140), 5)
+
+    # Right goal
+    pygame.draw.rect(screen, (255, 255, 255), (780, 180, 20, 140), 5)
+
+
 # This class is like a blueprint for making players
 class Player:
 
@@ -57,7 +66,7 @@ class Player:
             12
         )
 
-    # This function draws the whole player
+    # This function draws the player
     def draw(self):
 
         # Draw the body
@@ -67,10 +76,10 @@ class Player:
             (self.x, self.y, 30, 45)
         )
 
-        # Draw the head using the player's position
+        # Draw the head
         self.draw_head()
 
-        # Draw the left leg
+        # Draw the legs
         pygame.draw.line(
             screen,
             (0, 0, 0),
@@ -79,7 +88,6 @@ class Player:
             5
         )
 
-        # Draw the right leg
         pygame.draw.line(
             screen,
             (0, 0, 0),
@@ -170,11 +178,14 @@ while running:
     # Green football field
     screen.fill((40, 150, 40))
 
+    # Draw the goals
+    draw_goals()
+
     # Draw players
     player1.draw()
     player2.draw()
 
-    # Draw ball
+    # Draw the ball
     draw_ball(ball_x, ball_y)
 
     pygame.display.update()
@@ -184,7 +195,7 @@ while running:
 pygame.quit()
 
 
-# Things I added:
+# Things I need to add:
 # 1. Make the players dribble the ball
 # 2. Make the players block
 # 3. Keep the players' heads on their bodies
