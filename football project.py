@@ -175,3 +175,9 @@ while running:
     clock.tick(60)
 
 pygame.quit()
+#i need to add function
+#and classes and objects which will help me do the following
+#1. make the players driblle the ball
+#2. make the players block
+#3.keeping theere head on there body
+print("game over")
