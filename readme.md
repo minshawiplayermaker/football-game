@@ -48,4 +48,3 @@ Two players can move around the football field, dribble the ball, block, and sho
 * Score counter
 * Game over screen
 * Restart button
-
